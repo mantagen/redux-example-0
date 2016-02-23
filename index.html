@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Redux example</title>
+	<script src="https://wzrd.in/standalone/expect@latest"></script>
+	<script src="https://wzrd.in/standalone/deep-freeze@latest"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.3.1/redux.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/expect/1.14.0/expect.js"></script>
+
+</head>
+<body>
+	<div id="root">
+		<div class="counter counter-0">
+			<div class="counter-display"></div>
+			<button class="increment" onclick="store.dispatch({type:'INCREMENT'});">Increment</button>
+			<button class="decrement" onclick="store.dispatch({type:'DECREMENT'});">Decrement</button>
+		</div>
+	</div>
+	<script>
+	'use strict'
+const counter = (state, action) => {
+	if(typeof(state)==='undefined'){
+		state = 0;
+	}
+	let types = {
+		'INCREMENT': () => state + 1,
+		'DECREMENT': () => state - 1
+		}
+	return types[action.type] ? types[action.type]() : state;
+}
+// This is our reducer function. It defines the relationship between prevState and nextState by an action
+
+// const {createStore} = Redux;
+var createStore = Redux.createStore; // using this declaration as browser still not completely es6 compatible.
+// import {createStore} from 'redux';
+const store = createStore(counter);
+const render = () => {
+	document.querySelector('.counter-display').innerHTML = store.getState();
+}
+render();
+
+store.subscribe(render);
+
+
+
+	</script>
+
+	<script>
+expect(
+	counter(0, { type:'INCREMENT' })
+).toEqual(1);
+
+expect(
+	counter(1, { type:'INCREMENT' })
+).toEqual(2);
+
+expect(
+	counter(1, { type:'DECREMENT' })
+).toEqual(0);
+
+expect(
+	counter(2, { type:'DECREMENT' })
+).toEqual(1);
+
+expect(
+	counter(2, { type:'ooowuwu' })
+).toEqual(2);
+
+
+console.log('Tests pass');
+	</script>
+</body>
+</html>
